@@ -1,0 +1,5 @@
+# ninja log v7
+11	998	7870771058836726	CMakeFiles/p2p.dir/src/core/Logger.cpp.obj	90032bceae97656f
+3	1088	7870771058752419	CMakeFiles/p2p.dir/src/main.cpp.obj	dcd7d5ee00b6af19
+17	1355	7870771058896713	CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj	323a7a68c671c610
+1357	1554	7870771072292513	p2p.exe	76020cd71e3cc7bf

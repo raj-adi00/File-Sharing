@@ -1,0 +1,5 @@
+[2025-12-10 19:08:37][INFO] P2P System Starting...
+[2025-12-10 19:08:37][DEBUG] Debug mode enabled
+[2025-12-10 19:08:37][ERROR] Dummy error test
+[2025-12-10 19:08:37][INFO] Port: 9000
+[2025-12-10 19:08:37][INFO] Debug Mode: true
