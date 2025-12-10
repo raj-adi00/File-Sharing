@@ -13,7 +13,7 @@ Follow these simple steps to clone the repository, compile the application using
 Navigate to where you want to store the project and clone the files:
 
 ```bash
-git clone [https://github.com/raj-adi00/File-Sharing.git]
+git clone https://github.com/raj-adi00/File-Sharing.git
 cd p2p
 # Clean up any existing build folder
 rm -rf build 
