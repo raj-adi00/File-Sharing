@@ -1,15 +1,16 @@
 #include <iostream>
 #include "core/Logger.h"
 #include "core/ConfigManager.h"
+using namespace std;
 
 int main() {
     ConfigManager config;
     if (!config.load("config.ini")) {
-        std::cout << "Failed to load config\n";
+        cout << "Failed to load config\n";
         return 1;
     }
 
-    std::string logFile = config.getString("log_file", "default.log");
+    string logFile = config.getString("log_file", "default.log");
 
     Logger::instance().init(logFile);
     Logger::instance().info("P2P System Starting...");
@@ -19,8 +20,8 @@ int main() {
     int port = config.getInt("port");
     bool debug = config.getBool("debug");
 
-    Logger::instance().info("Port: " + std::to_string(port));
-    Logger::instance().info("Debug Mode: " + std::string(debug ? "true" : "false"));
+    Logger::instance().info("Port: " + to_string(port));
+    Logger::instance().info("Debug Mode: " + string(debug ? "true" : "false"));
 
     return 0;
 }
