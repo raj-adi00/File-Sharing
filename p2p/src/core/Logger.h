@@ -5,9 +5,9 @@
 using namespace std;
 
 enum class LogLevel {
-    INFO,
-    DEBUG,
-    ERROR
+    LOG_INFO,
+    LOG_DEBUG,
+    LOG_ERROR
 };
 
 class Logger {

@@ -19,9 +19,9 @@ Logger::~Logger() {
 
 string Logger::levelToString(LogLevel level) {
     switch (level) {
-        case LogLevel::INFO: return "INFO";
-        case LogLevel::DEBUG: return "DEBUG";
-        case LogLevel::ERROR: return "ERROR";
+        case LogLevel::LOG_INFO: return "INFO";
+        case LogLevel::LOG_DEBUG: return "DEBUG";
+        case LogLevel::LOG_ERROR: return "ERROR";
     }
     return "UNKNOWN";
 }
@@ -40,13 +40,13 @@ void Logger::log(LogLevel level, const string& message) {
 }
 
 void Logger::info(const string& msg) {
-    log(LogLevel::INFO, msg);
+    log(LogLevel::LOG_INFO, msg);
 }
 
 void Logger::debug(const string& msg) {
-    log(LogLevel::DEBUG, msg);
+    log(LogLevel::LOG_DEBUG, msg);
 }
 
 void Logger::error(const string& msg) {
-    log(LogLevel::ERROR, msg);
+    log(LogLevel::LOG_ERROR, msg);
 }
