@@ -1,6 +1,7 @@
 #include <iostream>
 #include "core/Logger.h"
 #include "core/ConfigManager.h"
+#include "core/PeerCore.h"
 using namespace std;
 
 int main() {
@@ -22,6 +23,14 @@ int main() {
 
     Logger::instance().info("Port: " + to_string(port));
     Logger::instance().info("Debug Mode: " + string(debug ? "true" : "false"));
+
+    PeerCore core;
+    core.start();
+
+    this_thread::sleep_for(chrono::seconds(5));
+
+    core.stop();
+    Logger::instance().info("P2P System Shutdown...");
 
     return 0;
 }

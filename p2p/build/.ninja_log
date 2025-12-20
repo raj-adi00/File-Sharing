@@ -1,5 +1,7 @@
 # ninja log v7
-9	948	7870788351186313	CMakeFiles/p2p.dir/src/core/Logger.cpp.obj	90032bceae97656f
-3	1049	7870788351124993	CMakeFiles/p2p.dir/src/main.cpp.obj	dcd7d5ee00b6af19
-15	1245	7870788351246336	CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj	323a7a68c671c610
-1245	1431	7870788363546653	p2p.exe	76020cd71e3cc7bf
+22	1128	7879113799434009	CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj	f5fdc4e9298a2570
+11	1146	7879113799304092	CMakeFiles/p2p.dir/src/core/Logger.cpp.obj	90032bceae97656f
+4	1360	7879113799241770	CMakeFiles/p2p.dir/src/main.cpp.obj	dcd7d5ee00b6af19
+16	1441	7879113799373935	CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj	323a7a68c671c610
+28	2210	7879113799530649	CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj	ed764884af9d4798
+2214	2641	7879113821339640	p2p.exe	6c5af9d1077aa222
