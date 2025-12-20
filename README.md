@@ -24,6 +24,9 @@ cmake -S . -B build
 # Compile the project
 cmake --build build
 
-# Start the P2P file sharing platform
-build/p2p.exe
+# Start the P2P file sharing platform Server on Terminal 1
+build/p2p.exe Server
+
+#Start the P2P file sharing platform Client on Terminal 2
+build/p2p.exe Client
 ```
