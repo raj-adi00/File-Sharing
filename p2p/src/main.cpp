@@ -6,6 +6,8 @@
 #include "core/PeerCore.h"
 #include "net/TcpListener.h"
 #include "net/TcpConnection.h"
+#include "protocol/Message.h"
+#include "protocol/MessageFramer.h"
 
 using namespace std;
 
@@ -20,6 +22,7 @@ int main(int argc, char* argv[]) {
     int port = config.getInt("port");
     bool debug = config.getBool("debug");
     string server_ip=config.getString("server_ip","127.0.0.1");
+    int max_message_size=config.getInt("max_message_size",10485760);
 
     Logger::instance().init(logFile);
     Logger::instance().info("P2P System Starting...");
@@ -47,11 +50,18 @@ int main(int argc, char* argv[]) {
             Logger::instance().info("Server started at port "+to_string(port)+"....");
             TcpConnection client=server.acceptClient();
             Logger::instance().info("Client Connected...");
-            char buffer[1024]={0};
-            int bytesRecieved=client.recvData(buffer,sizeof(buffer));
-            if(bytesRecieved>0){
-                cout<<"Client Echo: "<<buffer<<endl;
-                client.sendData(buffer,bytesRecieved);
+
+            vector<uint8_t> buffer;
+            Message msg;
+            bool messageReceived=false;
+
+            while(!messageReceived){
+                int bytes=client.recvBytes(buffer);
+                if(bytes<=0)break;
+                if(MessageFramer::decode(buffer,msg,max_message_size)){
+                    cout<<"Client Echo: "<<static_cast<int>(msg.header.type)<<endl;
+                    messageReceived=true;
+                }
             }
         }else{
             Logger::instance().error("Failed to start server");
@@ -62,11 +72,12 @@ int main(int argc, char* argv[]) {
         if(conn.connectTo(server_ip,port)){
             Logger::instance().info("Connected to: "+server_ip+" at port "+to_string(port)+"...");
 
-            string msg="Hello from Client";
-            conn.sendData(msg.c_str(),msg.length());
-            char buffer[1024]={0};
-            int bytesRecieved=conn.recvData(buffer,sizeof(buffer));
-            cout<<"Server Echo: "<<buffer<<endl;
+            Message hello;
+            hello.header.type=MessageType::MSG_HELLO;
+            hello.header.length=0;
+
+            auto encoded=MessageFramer::encode(hello,max_message_size);
+            conn.sendBytes(encoded);
         }else{
             Logger::instance().error("Failed to connect to: "+server_ip+" at port "+to_string(port)+"...");
         }

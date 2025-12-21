@@ -1,5 +1,8 @@
 #include "TcpConnection.h"
 #include <iostream>
+#include <cstdint>
+
+using namespace std;
 
 TcpConnection::TcpConnection():sock(INVALID_SOCKET){}
 
@@ -34,6 +37,20 @@ int TcpConnection::sendData(const char*buffer,int size){
 
 int TcpConnection::recvData(char*buffer,int size){
     return recv(sock,buffer,size,0);
+}
+
+int TcpConnection::sendBytes(const vector<uint8_t>&data){
+    // return send(sock,reinterpret_cast<const char*>(data.data()),(int)data.size(),0);
+    return sendData(reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()));
+}
+
+int TcpConnection::recvBytes(vector<uint8_t>&buffer){
+    uint8_t temp[1024];
+    int bytes=recv(sock,reinterpret_cast<char*>(temp),sizeof(temp),0);
+    if(bytes>0){
+        buffer.insert(buffer.end(),temp,temp+bytes);
+    }
+    return bytes;
 }
 
 void TcpConnection::close(){
