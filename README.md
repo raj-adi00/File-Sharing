@@ -8,8 +8,6 @@
 
 Follow these simple steps to clone the repository, compile the application using `cmake`, and run the executable.
 
-### 1. Clone the Repository
-
 Navigate to where you want to store the project and clone the files:
 
 ```bash
