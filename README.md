@@ -9,15 +9,18 @@ PeerShare is designed for speed and reliability. By cutting out the middleman (c
 ## ✨ Key Features (Current & Roadmap)
 
 ### 🛠️ Architecture & Core Logic (Implemented)
-* **Custom Binary Protocol:** Uses a high-efficiency **Length-Prefix framing system** to ensure data integrity over TCP streams.
-* **Config-Driven Design:** All system behaviors (ports, buffer sizes, security limits) are controlled via `config.ini`. Update the app without recompiling!
-* **Thread-Safe Logging:** Multi-level logging (INFO, DEBUG, ERROR) to both console and persistent files for easy debugging.
-* **Robust Error Handling:** Integrated "Memory Bomb" protection and packet validation to reject malformed data.
+* **Custom Binary Protocol:** High-efficiency **Length-Prefix framing system** that ensures data integrity and prevents packet fragmentation.
+* **UDP Peer Discovery (New!):** Automatic detection of peers on the local network using UDP broadcasting. No manual IP entry required.
+* **Dynamic Peer Table:** Real-time, thread-safe registry of active neighbors discovered on the LAN.
+* **Config-Driven Design:** System behaviors (discovery ports, broadcast intervals, log paths) are managed via `config.ini`. Update settings without recompiling.
+* **Multi-Threaded Engine:** Parallel execution of Discovery (UDP), Listeners (TCP), and the Main UI/Logic thread.
+* **Robust Logging:** Multi-level (INFO, DEBUG, ERROR) thread-safe logging to both console and `p2p.log`.
 
-### 🌐 Networking & Security (In Progress)
-* **TCP/IP Reliability:** Guaranteed delivery of file chunks using connection-oriented logic.
-* **UDP Peer Discovery:** (Day 4) Automatic peer detection on the local network—no need to type IP addresses.
-* **Binary Message Framing:** Custom headers including `MessageType` and `PayloadLength` for structured communication.
+### 🌐 Networking & Security (In Progress - Day 5)
+* **Protocol Handshake:** Implementation of `HELLO` and `HELLO_ACK` exchange to verify peer identity and capabilities before data transfer.
+* **Session Management:** Tracking active TCP connections and protocol versions to ensure compatibility between nodes.
+* **Heartbeat & Liveness:** Integrating "Last Seen" logic to automatically prune inactive peers from the table.
+* **AES-256 Encryption:** (Future) Planned integration of secure payload encryption for private file sharing.
 
 ---
 
@@ -56,6 +59,6 @@ cmake -S . -B build
 cmake --build build
 
 # Start the P2P file sharing platform Server on Terminal 1
-build/p2p.exe Server
+build/p2p.exe
 #Start the P2P file sharing platform Client on Terminal 2
-build/p2p.exe Client
+build/p2p.exe
