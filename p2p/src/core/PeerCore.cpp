@@ -1,7 +1,7 @@
 #include "PeerCore.h"
 #include "Logger.h"
 
-PeerCore::PeerCore(){
+PeerCore::PeerCore(const string&peerId):discovery(peerId){
     Logger::instance().info("PeerCore created");
 }
 

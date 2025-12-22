@@ -3,7 +3,7 @@
 
 class PeerCore{
     public:
-    PeerCore();
+    PeerCore(const string&peerId);
     ~PeerCore();
 
     void start();

@@ -14,6 +14,7 @@ add_executable(p2p
     src/net/TcpConnection.cpp
     src/protocol/Message.cpp
     src/protocol/MessageFramer.cpp
+    src/discovery/PeerTable.cpp
 )
 
 target_include_directories(p2p PRIVATE src)
