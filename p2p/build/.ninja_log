@@ -1,12 +1,13 @@
 # ninja log v7
-60	835	7880830375623147	CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj	748540274ccc034c
-68	1115	7880830375682381	CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj	5c52507b36584871
-13	1571	7880830375137947	CMakeFiles/p2p.dir/src/core/Logger.cpp.obj	90032bceae97656f
-29	1576	7880830375292529	CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj	f5fdc4e9298a2570
-18	1909	7880830375214934	CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj	323a7a68c671c610
-73	2057	7880830375737526	CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj	d8df2f412f9e23ae
-41	2985	7880830375457435	CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj	5b5571d43a6c271a
-51	3124	7880830375554696	CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj	601d694b6c2b52b5
-6	3566	7880830375056677	CMakeFiles/p2p.dir/src/main.cpp.obj	dcd7d5ee00b6af19
-35	4494	7880830375356660	CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj	ed764884af9d4798
-4495	4959	7880830419941878	p2p.exe	e20d63f54d3a58db
+52	792	7881821941998044	CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj	748540274ccc034c
+62	1102	7881821942078038	CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj	5c52507b36584871
+11	1585	7881821941532462	CMakeFiles/p2p.dir/src/core/Logger.cpp.obj	90032bceae97656f
+20	1652	7881821941638102	CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj	f5fdc4e9298a2570
+15	1937	7881821941573509	CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj	323a7a68c671c610
+72	1989	7881821942148132	CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj	d8df2f412f9e23ae
+34	2739	7881821941819975	CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj	5b5571d43a6c271a
+44	3170	7881821941890106	CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj	601d694b6c2b52b5
+78	3213	7881821942208154	CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj	9efdc711e8faa40e
+4	3309	7881821941476035	CMakeFiles/p2p.dir/src/main.cpp.obj	dcd7d5ee00b6af19
+27	4499	7881821941712093	CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj	ed764884af9d4798
+4500	4910	7881821986425487	p2p.exe	87aad10a824b6754

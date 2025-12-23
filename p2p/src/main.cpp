@@ -8,10 +8,15 @@
 #include "net/TcpConnection.h"
 #include "protocol/Message.h"
 #include "protocol/MessageFramer.h"
+#include "protocol/ProtocolSession.h"
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    if(argc<2)return 0;
+    string mode=argv[1];
+
     srand(static_cast<unsigned int>(time(0)));
     ConfigManager config;
     if (!config.load("config.ini")) {
@@ -29,22 +34,26 @@ int main() {
     Logger::instance().info("P2P Node Starting...");
 
     WSADATA wsa;
-    if(WSAStartup(MAKEWORD(2, 2), &wsa)!=0){
-     Logger::instance().error("WSAStartup Failed");
-     return 1;
+    WSAStartup(MAKEWORD(2,2),&wsa);
+
+    if(mode=="server"){
+        TcpListener listener;
+        listener.start(port);
+
+        TcpConnection conn=listener.acceptClient();
+        ProtocolSession session(move(conn),"SERVER",max_message_size);
+
+        session.performServerHandshake();
     }
-    
-    string peerId="peer_"+to_string(rand()%10000);
-    Logger::instance().info("PeerId "+peerId);
+    if(mode=="client"){
+        TcpConnection conn;
+        conn.connectTo(server_ip,port);
 
-    PeerCore core(peerId);
-    core.start();
-    this_thread::sleep_for(chrono::seconds(60));
-    core.stop();
+        ProtocolSession session(move(conn),"CLIENT",max_message_size);
+        session.performClientHandshake();
+    }
 
-
-    WSACleanup();
     Logger::instance().info("P2P System Shutdown...");
-
+    WSACleanup();
     return 0;
 }

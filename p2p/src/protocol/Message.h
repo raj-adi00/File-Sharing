@@ -7,7 +7,8 @@ using namespace std;
 enum class MessageType:uint16_t{
     MSG_HELLO=1,
     MSG_ERROR=2,
-    MSG_PING=3
+    MSG_PING=3,
+    MSG_HELLO_ACK=4
 };
 
 struct MessageHeader{
