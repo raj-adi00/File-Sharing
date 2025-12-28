@@ -20,6 +20,8 @@ add_executable(p2p
     src/discovery/PeerTable.cpp
     src/protocol/ProtocolSession.cpp
     src/crypto/CryptoEngine.cpp
+    src/storage/FileManager.cpp
+    src/storage/ChunkManager.cpp
 )
 
 target_include_directories(p2p PRIVATE src ${OPENSSL_INC})
