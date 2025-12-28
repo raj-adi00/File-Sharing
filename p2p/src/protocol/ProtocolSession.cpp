@@ -8,14 +8,14 @@
 
 #include<cstring>
 
-ProtocolSession::ProtocolSession(TcpConnection&& conn,const std::string &selfId,uint32_t max_allowed_size):connection(std::move(conn)),selfPeerId(selfId),max_allowed_size(max_allowed_size){}
+ProtocolSession::ProtocolSession(TcpConnection&& conn,const std::string &selfId,uint32_t max_allowed_size):connection(std::move(conn)),selfPeerId(selfId),max_allowed_size(max_allowed_size){this->crypto=nullptr;}
 
 std::string ProtocolSession::getRemotePeerId()const{
     return remotePeerId;
 }
 
 bool ProtocolSession::sendEncryptedMessage(Message &msg){
-    msg.payload=crypto.encrypt(msg.payload);
+    msg.payload=crypto->encrypt(msg.payload);
     msg.header.length=msg.payload.size();
 
     auto encoded=MessageFramer::encode(msg,max_allowed_size);
@@ -30,11 +30,30 @@ bool ProtocolSession::recvEncryptedMessage(Message &out){
         if(r<=0)return false;
         
         if(MessageFramer::decode(buffer,out,max_allowed_size)){
-            out.payload=crypto.decrypt(out.payload);
+            out.payload=crypto->decrypt(out.payload);
             out.header.length=out.payload.size();
             return true;
         }
     }
+}
+
+bool ProtocolSession::performKeyExchange(){
+    Message m;
+    m.header.type=MessageType::MSG_KEY_EXCHG;
+    m.payload=keyEx.getPublicKey();
+    m.header.length=m.payload.size();
+
+    connection.sendBytes(MessageFramer::encode(m,max_allowed_size));
+    
+    Message resp;
+    vector<uint8_t> buf;
+    while(true){
+        connection.recvBytes(buf);
+        if(MessageFramer::decode(buf,resp,max_allowed_size))break;
+    }
+    auto secret=keyEx.deriveSharedKey(resp.payload);
+    crypto=new CryptoEngine(secret);
+    return true;
 }
 
 //                    ---CLIENT---

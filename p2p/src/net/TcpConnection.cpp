@@ -12,6 +12,19 @@ TcpConnection::~TcpConnection(){
     close();
 }
 
+TcpConnection::TcpConnection(TcpConnection &&other)noexcept:sock(other.sock){
+    other.sock=INVALID_SOCKET;
+}
+
+TcpConnection& TcpConnection::operator=(TcpConnection&& other)noexcept{
+    if(this!=&other){
+        close();
+        this->sock=other.sock;
+        other.sock=INVALID_SOCKET;
+    }
+    return *this;
+}
+
 bool TcpConnection::connectTo(const string &ip,int port){
     sock=socket(AF_INET,SOCK_STREAM,IPPROTO_TCP);
 
@@ -58,4 +71,8 @@ void TcpConnection::close(){
         closesocket(sock);
         sock=INVALID_SOCKET;
     }
+}
+
+SOCKET TcpConnection::getSocket(){
+    return sock;
 }

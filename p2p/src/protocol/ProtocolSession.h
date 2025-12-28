@@ -5,6 +5,7 @@
 #include "Message.h"
 #include "../net/TcpConnection.h"
 #include "../crypto/CryptoEngine.h"
+#include "../crypto/KeyExchange.h"
 
 class ProtocolSession{
     public:
@@ -16,6 +17,8 @@ class ProtocolSession{
         bool sendEncryptedMessage(Message &msg);
         bool recvEncryptedMessage(Message &out);
 
+        bool performKeyExchange();
+
         std::string getRemotePeerId() const;
         uint32_t max_allowed_size=1024*1024*10; //10MB
     private:
@@ -25,9 +28,10 @@ class ProtocolSession{
         bool recvHelloAck(Message &out);
 
         TcpConnection connection;
-        CryptoEngine crypto;
         std::string selfPeerId;
         std::string remotePeerId;
+        KeyExchange keyEx;
+        CryptoEngine* crypto=nullptr;
 
         static constexpr uint16_t PROTOCOL_VERSION=1;
 };

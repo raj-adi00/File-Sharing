@@ -22,6 +22,7 @@ add_executable(p2p
     src/crypto/CryptoEngine.cpp
     src/storage/FileManager.cpp
     src/storage/ChunkManager.cpp
+    src/crypto/KeyExchange.cpp
 )
 
 target_include_directories(p2p PRIVATE src ${OPENSSL_INC})
