@@ -14,6 +14,29 @@ std::string ProtocolSession::getRemotePeerId()const{
     return remotePeerId;
 }
 
+bool ProtocolSession::sendEncryptedMessage(Message &msg){
+    msg.payload=crypto.encrypt(msg.payload);
+    msg.header.length=msg.payload.size();
+
+    auto encoded=MessageFramer::encode(msg,max_allowed_size);
+    connection.sendBytes(encoded);
+    return true;
+}
+
+bool ProtocolSession::recvEncryptedMessage(Message &out){
+    vector<uint8_t> buffer;
+    while(true){
+        int r=connection.recvBytes(buffer);
+        if(r<=0)return false;
+        
+        if(MessageFramer::decode(buffer,out,max_allowed_size)){
+            out.payload=crypto.decrypt(out.payload);
+            out.header.length=out.payload.size();
+            return true;
+        }
+    }
+}
+
 //                    ---CLIENT---
 bool ProtocolSession::performClientHandshake(){
     if(!sendHello()){

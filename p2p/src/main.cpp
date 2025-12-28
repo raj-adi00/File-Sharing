@@ -43,14 +43,28 @@ int main(int argc, char* argv[]) {
         TcpConnection conn=listener.acceptClient();
         ProtocolSession session(move(conn),"SERVER",max_message_size);
 
-        session.performServerHandshake();
+        if(session.performServerHandshake()){
+            Message msg;
+            if(session.recvEncryptedMessage(msg)){
+                string receivedText(msg.payload.begin(),msg.payload.end());
+                Logger::instance().info("Received: "+receivedText);
+            }else{
+                Logger::instance().error("Failed to receive message");
+            }
+        }
     }
     if(mode=="client"){
         TcpConnection conn;
         conn.connectTo(server_ip,port);
 
         ProtocolSession session(move(conn),"CLIENT",max_message_size);
-        session.performClientHandshake();
+        if(session.performClientHandshake()){
+            Message msg;
+            msg.header.type=MessageType::MSG_PING;
+            string txt="Hello World";
+            msg.payload.assign(txt.begin(),txt.end());
+            session.sendEncryptedMessage(msg);
+        }
     }
 
     Logger::instance().info("P2P System Shutdown...");

@@ -47,7 +47,7 @@ build cmake_object_order_depends_target_p2p: phony || .
 build CMakeFiles/p2p.dir/src/main.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/main.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\main.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -56,7 +56,7 @@ build CMakeFiles/p2p.dir/src/main.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Proj
 build CMakeFiles/p2p.dir/src/core/Logger.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/core/Logger.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\core\Logger.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\core
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -65,7 +65,7 @@ build CMakeFiles/p2p.dir/src/core/Logger.cpp.obj: CXX_COMPILER__p2p_unscanned_ D
 build CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/core/ConfigManager.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\core\ConfigManager.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\core
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -74,7 +74,7 @@ build CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj: CXX_COMPILER__p2p_unsca
 build CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/core/PeerCore.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\core\PeerCore.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\core
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -83,7 +83,7 @@ build CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj: CXX_COMPILER__p2p_unscanned_
 build CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/discovery/DiscoveryService.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\discovery\DiscoveryService.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\discovery
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -92,7 +92,7 @@ build CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj: CXX_COMPILER__p
 build CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/net/TcpListener.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\net\TcpListener.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\net
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -101,7 +101,7 @@ build CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj: CXX_COMPILER__p2p_unscanne
 build CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/net/TcpConnection.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\net\TcpConnection.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\net
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -110,7 +110,7 @@ build CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj: CXX_COMPILER__p2p_unscan
 build CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/protocol/Message.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\protocol\Message.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\protocol
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -119,7 +119,7 @@ build CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj: CXX_COMPILER__p2p_unscann
 build CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/protocol/MessageFramer.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\protocol\MessageFramer.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\protocol
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -128,7 +128,7 @@ build CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj: CXX_COMPILER__p2p_u
 build CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/discovery/PeerTable.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\discovery\PeerTable.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\discovery
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
@@ -137,9 +137,18 @@ build CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj: CXX_COMPILER__p2p_unsc
 build CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/protocol/ProtocolSession.cpp || cmake_object_order_depends_target_p2p
   DEP_FILE = CMakeFiles\p2p.dir\src\protocol\ProtocolSession.cpp.obj.d
   FLAGS = -std=gnu++20
-  INCLUDES = -ID:/Projects/FileSharing/p2p/src
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
   OBJECT_DIR = CMakeFiles\p2p.dir
   OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\protocol
+  TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
+  TARGET_PDB = p2p.pdb
+
+build CMakeFiles/p2p.dir/src/crypto/CryptoEngine.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/crypto/CryptoEngine.cpp || cmake_object_order_depends_target_p2p
+  DEP_FILE = CMakeFiles\p2p.dir\src\crypto\CryptoEngine.cpp.obj.d
+  FLAGS = -std=gnu++20
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
+  OBJECT_DIR = CMakeFiles\p2p.dir
+  OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\crypto
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
   TARGET_PDB = p2p.pdb
 
@@ -151,9 +160,9 @@ build CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj: CXX_COMPILER__p2p
 #############################################
 # Link the executable p2p.exe
 
-build p2p.exe: CXX_EXECUTABLE_LINKER__p2p_ CMakeFiles/p2p.dir/src/main.cpp.obj CMakeFiles/p2p.dir/src/core/Logger.cpp.obj CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj
+build p2p.exe: CXX_EXECUTABLE_LINKER__p2p_ CMakeFiles/p2p.dir/src/main.cpp.obj CMakeFiles/p2p.dir/src/core/Logger.cpp.obj CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj CMakeFiles/p2p.dir/src/crypto/CryptoEngine.cpp.obj | C$:/Program$ Files/OpenSSL-Win64/lib/VC/x64/MT/libcrypto.lib
   LINK_FLAGS = -static-libgcc -static-libstdc++ -static
-  LINK_LIBRARIES = -lws2_32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = -lws2_32  "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MT/libcrypto.lib"  -lcrypt32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\p2p.dir
   POST_BUILD = cd .
   PRE_LINK = cd .

@@ -3,7 +3,8 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/Program Files/OpenSSL-Win64/include"
             ],
             "defines": [
                 "_DEBUG",
