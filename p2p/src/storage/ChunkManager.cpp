@@ -17,7 +17,9 @@ string ChunkManager::sha256(const vector<uint8_t>& data){
     ostringstream oss;
     for(int i=0;i<SHA256_DIGEST_LENGTH;i++)
         oss<<hex<<setw(2)<<setfill('0')<<(int)hash[i];
-    return oss.str();
+    string result=oss.str();
+    if(result.length()>64)result=result.substr(0,64);
+    return result;
 }
 
 bool ChunkManager::generateManifest(const string & metaPath){
@@ -43,4 +45,20 @@ bool ChunkManager::generateManifest(const string & metaPath){
         meta<<"CHUNK_"<<i<<" HASH="<<hash<<"\n";
     }
     return true;
+}
+
+vector<string> ChunkManager::parseManifestData(const vector<uint8_t> &manifestData){
+    vector<string> hashes;
+    string manifestStr(manifestData.begin(),manifestData.end());
+    istringstream iss(manifestStr);
+    string line;
+    while(getline(iss,line)){
+            size_t pos=line.find("HASH=");
+            if(pos!=string::npos){
+                string h=line.substr(pos+5);
+                h.erase(h.find_last_not_of(" \n\r\t") + 1);
+                hashes.push_back(h);
+            }
+    }
+    return hashes;
 }

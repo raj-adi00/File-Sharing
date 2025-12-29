@@ -11,10 +11,10 @@ enum class MessageType:uint16_t{
     MSG_HELLO_ACK=4,
     MSG_KEY_EXCHG=5,
     MSG_KEY_EXCHG_ACK=6,
-    MSG_FILE_OFFER=7,
-    MSG_FILE_ACCEPT=8,
-    MSG_CHUNK_DATA=9,
-    MSG_CHUNK_ACK=10
+    MSG_FILE_OFFER=7,   //Sender->Receiver
+    MSG_FILE_ACCEPT=8,  //Receiver->Sender
+    MSG_CHUNK_DATA=9,   //Sender->Receiver
+    MSG_CHUNK_ACK=10,    //Receiver->Sender
 };
 
 struct MessageHeader{

@@ -29,9 +29,10 @@ int main(int argc, char* argv[]) {
     bool debug = config.getBool("debug");
     string server_ip=config.getString("server_ip","127.0.0.1");
     int max_message_size=config.getInt("max_message_size",10485760);
+    uint32_t chunk_size=config.getInt("chunk_size",1048576);
 
     Logger::instance().init(logFile);
-    Logger::instance().info("P2P Node Starting...");
+    Logger::instance().info("P2P Node Starting ...");
 
     WSADATA wsa;
     WSAStartup(MAKEWORD(2,2),&wsa);
@@ -43,38 +44,41 @@ int main(int argc, char* argv[]) {
         TcpConnection conn=listener.acceptClient();
         if(conn.getSocket()==INVALID_SOCKET){
             Logger::instance().error("Failed to accept client connection");
+        }else{
+            Logger::instance().info("Client connected to Server.");
         }
-        ProtocolSession session(move(conn),"SERVER",max_message_size);
+        ProtocolSession session(move(conn),"SERVER",max_message_size,chunk_size);
 
         if(session.performServerHandshake()){
             if(session.performKeyExchange()){
-                Message msg;
-                if(session.recvEncryptedMessage(msg)){
-                    string receivedText(msg.payload.begin(),msg.payload.end());
-                    Logger::instance().info("Received: "+receivedText);
-                }else{
-                    Logger::instance().error("Failed to receive message");
-                }
+               Logger::instance().info("Security established. Ready to receive File.");
+               if(session.recvFile("D:/Projects/FileSharing/p2p/src/data/received_Des.png")){
+                Logger::instance().info("File received successfully.");
+               }else{
+                Logger::instance().error("Failed to receive file.");
+               }
             }
         }
     }
     if(mode=="client"){
         TcpConnection conn;
         conn.connectTo(server_ip,port);
-        ProtocolSession session(move(conn),"CLIENT",max_message_size);
+        ProtocolSession session(move(conn),"CLIENT",max_message_size,chunk_size);
 
         if(session.performClientHandshake()){
             if(session.performKeyExchange()){
-                Message msg;
-                msg.header.type=MessageType::MSG_PING;
-                string txt="Hello World";
-                msg.payload.assign(txt.begin(),txt.end());
-                session.sendEncryptedMessage(msg);
+                Logger::instance().info("Security established. Ready to send File.");
+                if(session.sendFile("D:/Projects/FileSharing/p2p/src/data/Des.png","D:/Projects/FileSharing/p2p/src/data/file.meta")){
+                    Logger::instance().info("File sent successfully.");
+                }else{
+                    Logger::instance().error("Failed to send file.");
+                }
             }
         }
     }
 
     Logger::instance().info("P2P System Shutdown...");
+    Sleep(1000);
     WSACleanup();
     return 0;
 }

@@ -5,10 +5,12 @@
 #include "ProtocolSession.h"
 #include "MessageFramer.h"
 #include "../core/Logger.h"
+#include "../storage/ChunkManager.h"
+#include "../storage/FileManager.h"
 
 #include<cstring>
 
-ProtocolSession::ProtocolSession(TcpConnection&& conn,const std::string &selfId,uint32_t max_allowed_size):connection(std::move(conn)),selfPeerId(selfId),max_allowed_size(max_allowed_size){this->crypto=nullptr;}
+ProtocolSession::ProtocolSession(TcpConnection&& conn,const std::string &selfId,uint32_t max_allowed_size,uint32_t chunksz):connection(std::move(conn)),selfPeerId(selfId),max_allowed_size(max_allowed_size),chunkSize(chunksz){this->crypto=nullptr;}
 
 std::string ProtocolSession::getRemotePeerId()const{
     return remotePeerId;
@@ -53,6 +55,161 @@ bool ProtocolSession::performKeyExchange(){
     }
     auto secret=keyEx.deriveSharedKey(resp.payload);
     crypto=new CryptoEngine(secret);
+    return true;
+}
+
+bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath){
+    ChunkManager cm(filePath,chunkSize);
+    if(!cm.generateManifest(metaPath)){
+        Logger::instance().error("Failed to generate manifest");
+        return false;
+    }
+
+    std::ifstream metaFile(metaPath,std::ios::binary | std::ios::ate);
+    if(!metaFile){
+        Logger::instance().error("Failed to open manifest file");
+        return false;
+    }
+
+    std::streamsize metaSize=metaFile.tellg();
+    metaFile.seekg(0,std::ios::beg);
+    std::vector<uint8_t> manifestData(metaSize);
+    metaFile.read((char*)manifestData.data(),metaSize);
+
+    size_t fileSize=FileManager::getFileSize(filePath);
+    uint32_t totalChunks=(fileSize+chunkSize-1)/chunkSize;
+    uint32_t mSize=(uint32_t)manifestData.size();
+
+    std::vector<uint8_t>payload;
+
+    payload.insert(payload.end(),(uint8_t*)&fileSize,(uint8_t*)&fileSize+sizeof(fileSize));
+    payload.insert(payload.end(),(uint8_t*)&chunkSize,(uint8_t*)&chunkSize+sizeof(chunkSize));
+    payload.insert(payload.end(),(uint8_t*)&totalChunks,(uint8_t*)&totalChunks+sizeof(totalChunks));
+    payload.insert(payload.end(),(uint8_t*)&mSize,(uint8_t*)&mSize+sizeof(mSize));
+    payload.insert(payload.end(),manifestData.begin(),manifestData.end());
+    payload.insert(payload.end(),filePath.begin(),filePath.end());
+
+    Message offer;
+    offer.header.type=MessageType::MSG_FILE_OFFER;
+    offer.payload=payload;
+
+    if(!sendEncryptedMessage(offer)){
+        Logger::instance().error("Failed to send MSG_FILE_OFFER");
+        return false;
+    }
+
+    //Wait for file accept
+    Message resp;
+    if(!recvEncryptedMessage(resp)){
+        Logger::instance().error("Failed to receive MSG_FILE_ACCEPT");
+        return false;
+    }
+
+    //Check file accept response
+    if(resp.header.type!=MessageType::MSG_FILE_ACCEPT){
+        Logger::instance().error("Expected MSG_FILE_ACCEPT");
+        return false;
+    }
+
+    //send file in chunks
+    for(uint32_t i=0;i<totalChunks;i++){
+        size_t offset=i*chunkSize;
+        size_t size=std::min(chunkSize,(uint32_t)(fileSize-offset));
+        std::vector<uint8_t> chunk;
+        FileManager::readChunk(filePath,offset,size,chunk);
+        Message chunkMsg;
+        chunkMsg.header.type=MessageType::MSG_CHUNK_DATA;
+        chunkMsg.payload=chunk;
+        if(!sendEncryptedMessage(chunkMsg)){
+            Logger::instance().error("Failed to send MSG_FILE_CHUNK at chunk "+std::to_string(i));
+            return false;
+        }else{
+            Logger::instance().info("Sent chunk "+std::to_string(i));
+        }
+        Message ack;
+        std::vector<uint8_t> abuf;
+        if(!recvEncryptedMessage(ack)){
+            Logger::instance().error("Failed to receive MSG_FILE_CHUNK_ACK at chunk "+std::to_string(i));
+            return false;
+        }else{
+            Logger::instance().info("Received chunk ack "+std::to_string(i));
+        }
+        if(ack.header.type!=MessageType::MSG_CHUNK_ACK){
+            Logger::instance().error("Expected MSG_FILE_CHUNK_ACK at chunk "+std::to_string(i));
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ProtocolSession::recvFile(const std::string&outputPath){
+    Message offer;
+    if(!recvEncryptedMessage(offer)){
+        Logger::instance().error("Failed to receive MSG_FILE_OFFER");
+        return false;
+    }
+    
+    if(offer.header.type!=MessageType::MSG_FILE_OFFER){
+        Logger::instance().error("Expected MSG_FILE_OFFER");
+        return false;
+    }
+
+    uint64_t fileSize;
+    uint32_t cSize,totalChunks,mSize;
+    uint8_t* ptr=offer.payload.data();
+    memcpy(&fileSize,ptr,sizeof(fileSize));
+    ptr+=sizeof(fileSize);
+    memcpy(&cSize,ptr,sizeof(cSize));
+    ptr+=sizeof(cSize);
+    memcpy(&totalChunks,ptr,sizeof(totalChunks));
+    ptr+=sizeof(totalChunks);
+    memcpy(&mSize,ptr,sizeof(mSize));
+    ptr+=sizeof(mSize);
+
+    //Extract manifest bytes and parse into hashes
+    std::vector<uint8_t> manifestData(ptr,ptr+mSize);
+    ChunkManager cmHelper("",0);
+    std::vector<string> expectedHashes=cmHelper.parseManifestData(manifestData);
+
+    //accept
+    Message accept;
+    accept.header.type=MessageType::MSG_FILE_ACCEPT;
+    if(!sendEncryptedMessage(accept)){
+        Logger::instance().error("Failed to send MSG_FILE_ACCEPT");
+        return false;
+    }
+
+    std::ofstream out(outputPath,std::ios::binary);
+    for(uint32_t i=0;i<totalChunks;i++){
+         Message chunk;
+         std::vector<uint8_t> cbuf;
+         if(!recvEncryptedMessage(chunk)){
+             Logger::instance().error("Failed to receive MSG_FILE_CHUNK");
+             return false;
+         }else{
+             Logger::instance().info("Received chunk "+std::to_string(i));
+         }
+
+         //hash verify
+         string actualHash=cmHelper.sha256(chunk.payload);
+         if(actualHash!=expectedHashes[i]){
+             Logger::instance().error("Hash mismatch for chunk "+std::to_string(i));
+             return false;
+         }else{
+             Logger::instance().info("Verified chunk "+std::to_string(i));
+         }
+         out.write((char*)chunk.payload.data(),chunk.payload.size());
+
+         Message ack;
+         ack.header.type=MessageType::MSG_CHUNK_ACK;
+         if(!sendEncryptedMessage(ack)){
+             Logger::instance().error("Failed to send MSG_FILE_CHUNK_ACK");
+             return false;
+         }else{
+             Logger::instance().info("Sent chunk ack "+std::to_string(i));
+         }
+    }
+    out.close();
     return true;
 }
 
