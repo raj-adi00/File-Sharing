@@ -9,14 +9,27 @@
 #include "../storage/FileManager.h"
 
 #include<cstring>
+#include<filesystem>
 
-ProtocolSession::ProtocolSession(TcpConnection&& conn,const std::string &selfId,uint32_t max_allowed_size,uint32_t chunksz):connection(std::move(conn)),selfPeerId(selfId),max_allowed_size(max_allowed_size),chunkSize(chunksz){this->crypto=nullptr;}
+ProtocolSession::ProtocolSession(TcpConnection &&conn, const std::string& peerId, uint32_t max_size, uint32_t chunksz) 
+    : selfPeerId(peerId), 
+      max_allowed_size(max_size), 
+      chunkSize(chunksz) 
+{
+    this->connection = std::move(conn); 
+    this->crypto = nullptr;
+    Logger::instance().info("ProtocolSession successfully initialized for " + peerId);
+}
 
 std::string ProtocolSession::getRemotePeerId()const{
     return remotePeerId;
 }
 
 bool ProtocolSession::sendEncryptedMessage(Message &msg){
+    if(!crypto){
+        Logger::instance().error("Crypto engine not initialized to send message");
+        return false;
+    }
     msg.payload=crypto->encrypt(msg.payload);
     msg.header.length=msg.payload.size();
 
@@ -26,6 +39,10 @@ bool ProtocolSession::sendEncryptedMessage(Message &msg){
 }
 
 bool ProtocolSession::recvEncryptedMessage(Message &out){
+    if(!crypto){
+        Logger::instance().error("Crypto engine not initialized to receive message");
+        return false;
+    }
     vector<uint8_t> buffer;
     while(true){
         int r=connection.recvBytes(buffer);
@@ -54,6 +71,7 @@ bool ProtocolSession::performKeyExchange(){
         if(MessageFramer::decode(buf,resp,max_allowed_size))break;
     }
     auto secret=keyEx.deriveSharedKey(resp.payload);
+    if(crypto)delete crypto;
     crypto=new CryptoEngine(secret);
     return true;
 }
@@ -111,8 +129,14 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
         return false;
     }
 
+    std::vector<uint8_t> remoteBitmap;
+    handleResumeAsSender(totalChunks,remoteBitmap);
     //send file in chunks
     for(uint32_t i=0;i<totalChunks;i++){
+        if(i<remoteBitmap.size() && remoteBitmap[i]==1){
+            Logger::instance().info("Skipping chunk "+std::to_string(i));
+            continue;
+        }
         size_t offset=i*chunkSize;
         size_t size=std::min(chunkSize,(uint32_t)(fileSize-offset));
         std::vector<uint8_t> chunk;
@@ -178,9 +202,28 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
         Logger::instance().error("Failed to send MSG_FILE_ACCEPT");
         return false;
     }
+    
+    std::fstream out(outputPath,std::ios::binary|std::ios::in|std::ios::out);
+    if(!out.is_open()){
+        std::ofstream create(outputPath,std::ios::binary);
+        create.close();
+        out.open(outputPath,std::ios::binary|std::ios::in|std::ios::out);
+    }
+    
+    ResumeState resume(totalChunks);
+    std::string resumePath=outputPath+".resume";
+    resume.load(resumePath);
 
-    std::ofstream out(outputPath,std::ios::binary);
+    if(!handlResumeAsReceiver(resume)){
+        Logger::instance().error("Failed to handle resume");
+        return false;
+    }
+
     for(uint32_t i=0;i<totalChunks;i++){
+        if(resume.isReceived(i)){
+            Logger::instance().info("Skipping chunk "+std::to_string(i));
+            continue;
+        }
          Message chunk;
          std::vector<uint8_t> cbuf;
          if(!recvEncryptedMessage(chunk)){
@@ -198,7 +241,10 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
          }else{
              Logger::instance().info("Verified chunk "+std::to_string(i));
          }
+         out.seekp(i*cSize);
          out.write((char*)chunk.payload.data(),chunk.payload.size());
+         resume.markReceived(i);
+         resume.save(resumePath);
 
          Message ack;
          ack.header.type=MessageType::MSG_CHUNK_ACK;
@@ -210,9 +256,38 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
          }
     }
     out.close();
+    std::filesystem::remove(outputPath+".resume");
     return true;
 }
 
+bool ProtocolSession::handlResumeAsReceiver(ResumeState &state){
+    Message bmp;
+    bmp.header.type=MessageType::MSG_RESUME_BITMAP;
+    bmp.payload=state.getBitmap();
+    if(!sendEncryptedMessage(bmp)){
+        Logger::instance().error("Failed to send MSG_RESUME_BITMAP");
+        return false;
+    }
+    return true;
+}
+
+bool ProtocolSession::handleResumeAsSender(size_t totalChunks,std::vector<uint8_t>& outRemoteBitmap){
+    Message req;
+    if(!recvEncryptedMessage(req)){
+        Logger::instance().error("Failed to receive MSG_RESUME_REQUEST");
+        return false;
+    }
+    if(req.header.type!=MessageType::MSG_RESUME_BITMAP){
+        Logger::instance().error("Expected MSG_RESUME_BITMAP");
+        return false;
+    }
+    outRemoteBitmap=req.payload;
+    return true;
+}
+
+ProtocolSession::~ProtocolSession(){
+    if(crypto)delete crypto;
+}
 //                    ---CLIENT---
 bool ProtocolSession::performClientHandshake(){
     if(!sendHello()){

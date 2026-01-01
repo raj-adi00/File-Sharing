@@ -13,5 +13,5 @@ class KeyExchange{
        vector<uint8_t> getPublicKey();
        vector<uint8_t> deriveSharedKey(const vector<uint8_t>& peerPublicKey);
     private:
-       EVP_PKEY* keypair;
+       EVP_PKEY* keypair=nullptr;
 };

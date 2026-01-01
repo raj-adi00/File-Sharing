@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     int port = config.getInt("port");
     bool debug = config.getBool("debug");
     string server_ip=config.getString("server_ip","127.0.0.1");
-    int max_message_size=config.getInt("max_message_size",10485760);
+    uint32_t max_message_size=config.getInt("max_message_size",10485760);
     uint32_t chunk_size=config.getInt("chunk_size",1048576);
 
     Logger::instance().init(logFile);
@@ -47,31 +47,38 @@ int main(int argc, char* argv[]) {
         }else{
             Logger::instance().info("Client connected to Server.");
         }
-        ProtocolSession session(move(conn),"SERVER",max_message_size,chunk_size);
+        string id_server="SERVER";
+        ProtocolSession session(std::move(conn),id_server,max_message_size,chunk_size);
 
         if(session.performServerHandshake()){
             if(session.performKeyExchange()){
                Logger::instance().info("Security established. Ready to receive File.");
-               if(session.recvFile("D:/Projects/FileSharing/p2p/src/data/received_Des.png")){
-                Logger::instance().info("File received successfully.");
-               }else{
-                Logger::instance().error("Failed to receive file.");
-               }
+               string targetPath = "D:/Projects/FileSharing/p2p/src/data/received_Des.png";
+               if(session.recvFile(targetPath)) {
+                Logger::instance().info("SUCCESS: File received fully.");
+            } else {
+                Logger::instance().debug("TRANSFER STOPPED: Check for .resume file to test resume.");
             }
         }
     }
+}
     if(mode=="client"){
         TcpConnection conn;
         conn.connectTo(server_ip,port);
-        ProtocolSession session(move(conn),"CLIENT",max_message_size,chunk_size);
+        Logger::instance().info("Connected to Server.");
+        string id_client="CLIENT";
+        ProtocolSession session(std::move(conn),id_client,max_message_size,chunk_size);
 
         if(session.performClientHandshake()){
             if(session.performKeyExchange()){
                 Logger::instance().info("Security established. Ready to send File.");
-                if(session.sendFile("D:/Projects/FileSharing/p2p/src/data/Des.png","D:/Projects/FileSharing/p2p/src/data/file.meta")){
-                    Logger::instance().info("File sent successfully.");
-                }else{
-                    Logger::instance().error("Failed to send file.");
+                  string sourceFile = "D:/Projects/FileSharing/p2p/src/data/Des.png";
+                  string metaFile = "D:/Projects/FileSharing/p2p/src/data/file.meta";
+
+                  if(session.sendFile(sourceFile, metaFile)) {
+                    Logger::instance().info("SUCCESS: File sent fully.");
+                } else {
+                    Logger::instance().debug("TRANSFER INTERRUPTED: Ready for resume test.");
                 }
             }
         }

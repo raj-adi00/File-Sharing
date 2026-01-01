@@ -15,6 +15,8 @@ enum class MessageType:uint16_t{
     MSG_FILE_ACCEPT=8,  //Receiver->Sender
     MSG_CHUNK_DATA=9,   //Sender->Receiver
     MSG_CHUNK_ACK=10,    //Receiver->Sender
+    MSG_RESUME_REQUEST=11,
+    MSG_RESUME_BITMAP=12
 };
 
 struct MessageHeader{
