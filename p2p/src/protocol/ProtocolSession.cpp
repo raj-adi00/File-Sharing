@@ -7,6 +7,7 @@
 #include "../core/Logger.h"
 #include "../storage/ChunkManager.h"
 #include "../storage/FileManager.h"
+#include "../ui/ProgressTracker.h"
 
 #include<cstring>
 #include<filesystem>
@@ -99,6 +100,7 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
     uint32_t mSize=(uint32_t)manifestData.size();
 
     std::vector<uint8_t>payload;
+    
 
     payload.insert(payload.end(),(uint8_t*)&fileSize,(uint8_t*)&fileSize+sizeof(fileSize));
     payload.insert(payload.end(),(uint8_t*)&chunkSize,(uint8_t*)&chunkSize+sizeof(chunkSize));
@@ -131,10 +133,20 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
 
     std::vector<uint8_t> remoteBitmap;
     handleResumeAsSender(totalChunks,remoteBitmap);
+    
+    size_t bytesAlreadyOnDisk=0;
+    for(uint32_t i=0;i<totalChunks;i++){
+        if(i<remoteBitmap.size() && remoteBitmap[i]==1){
+            size_t actualSize=std::min((size_t)chunkSize,(size_t)(fileSize-i*chunkSize));
+            bytesAlreadyOnDisk+=actualSize;
+        }
+    }
+     ProgressTracker tracker(fileSize,bytesAlreadyOnDisk);
+
     //send file in chunks
     for(uint32_t i=0;i<totalChunks;i++){
         if(i<remoteBitmap.size() && remoteBitmap[i]==1){
-            Logger::instance().info("Skipping chunk "+std::to_string(i));
+            Logger::instance().logToFile("Skipping chunk "+std::to_string(i));
             continue;
         }
         size_t offset=i*chunkSize;
@@ -148,7 +160,7 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
             Logger::instance().error("Failed to send MSG_FILE_CHUNK at chunk "+std::to_string(i));
             return false;
         }else{
-            Logger::instance().info("Sent chunk "+std::to_string(i));
+            Logger::instance().logToFile("Sent chunk "+std::to_string(i));
         }
         Message ack;
         std::vector<uint8_t> abuf;
@@ -156,12 +168,14 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
             Logger::instance().error("Failed to receive MSG_FILE_CHUNK_ACK at chunk "+std::to_string(i));
             return false;
         }else{
-            Logger::instance().info("Received chunk ack "+std::to_string(i));
+            Logger::instance().logToFile("Received chunk ack "+std::to_string(i));
         }
         if(ack.header.type!=MessageType::MSG_CHUNK_ACK){
             Logger::instance().error("Expected MSG_FILE_CHUNK_ACK at chunk "+std::to_string(i));
             return false;
         }
+        tracker.update(chunkSize);
+        tracker.render();
     }
     return true;
 }
@@ -219,9 +233,19 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
         return false;
     }
 
+    size_t bytesAlreadyOnDisk=0;
     for(uint32_t i=0;i<totalChunks;i++){
         if(resume.isReceived(i)){
-            Logger::instance().info("Skipping chunk "+std::to_string(i));
+            size_t actualSize=std::min((size_t)chunkSize,(size_t)(fileSize-i*chunkSize));
+            bytesAlreadyOnDisk+=actualSize;
+        }
+    }
+
+    ProgressTracker tracker(fileSize,bytesAlreadyOnDisk);
+
+    for(uint32_t i=0;i<totalChunks;i++){
+        if(resume.isReceived(i)){
+            Logger::instance().logToFile("Skipping chunk "+std::to_string(i));
             continue;
         }
          Message chunk;
@@ -230,7 +254,7 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
              Logger::instance().error("Failed to receive MSG_FILE_CHUNK");
              return false;
          }else{
-             Logger::instance().info("Received chunk "+std::to_string(i));
+             Logger::instance().logToFile("Received chunk "+std::to_string(i));
          }
 
          //hash verify
@@ -239,7 +263,7 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
              Logger::instance().error("Hash mismatch for chunk "+std::to_string(i));
              return false;
          }else{
-             Logger::instance().info("Verified chunk "+std::to_string(i));
+             Logger::instance().logToFile("Verified chunk "+std::to_string(i));
          }
          out.seekp(i*cSize);
          out.write((char*)chunk.payload.data(),chunk.payload.size());
@@ -252,7 +276,9 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
              Logger::instance().error("Failed to send MSG_FILE_CHUNK_ACK");
              return false;
          }else{
-             Logger::instance().info("Sent chunk ack "+std::to_string(i));
+             Logger::instance().logToFile("Sent chunk ack "+std::to_string(i));
+             tracker.update(chunk.payload.size());
+             tracker.render();
          }
     }
     out.close();

@@ -7,7 +7,8 @@ using namespace std;
 enum class LogLevel {
     LOG_INFO,
     LOG_DEBUG,
-    LOG_ERROR
+    LOG_ERROR,
+    LOG_FILE
 };
 
 class Logger {
@@ -15,11 +16,12 @@ public:
     static Logger& instance();
 
     void init(const string& filePath);
-    void log(LogLevel level, const string& message);
+    void log(LogLevel level, const string& message, bool logToTerminal = true);
 
     void info(const string& msg);
     void debug(const string& msg);
     void error(const string& msg);
+    void logToFile(const string& msg);
 
 private:
     Logger() = default;

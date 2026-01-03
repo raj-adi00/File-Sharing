@@ -26,7 +26,7 @@ string Logger::levelToString(LogLevel level) {
     return "UNKNOWN";
 }
 
-void Logger::log(LogLevel level, const string& message) {
+void Logger::log(LogLevel level, const string& message, bool logToTerminal) {
     lock_guard<mutex> lock(mtx);
 
     time_t now = time(nullptr);
@@ -34,8 +34,8 @@ void Logger::log(LogLevel level, const string& message) {
     strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&now));
 
     string finalMsg = "[" + string(buf) + "][" + levelToString(level) + "] " + message;
-
-    cout << finalMsg << endl;
+    
+    if(logToTerminal)cout << finalMsg << endl;
     if (file.is_open()) file << finalMsg << endl;
 }
 
@@ -49,4 +49,8 @@ void Logger::debug(const string& msg) {
 
 void Logger::error(const string& msg) {
     log(LogLevel::LOG_ERROR, msg);
+}
+
+void Logger::logToFile(const string &msg){
+    log(LogLevel::LOG_FILE, msg, false);
 }

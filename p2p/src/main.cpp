@@ -53,8 +53,9 @@ int main(int argc, char* argv[]) {
         if(session.performServerHandshake()){
             if(session.performKeyExchange()){
                Logger::instance().info("Security established. Ready to receive File.");
-               string targetPath = "D:/Projects/FileSharing/p2p/src/data/received_Des.png";
+               string targetPath = "D:/Projects/FileSharing/p2p/src/data/received_vid.mp4";
                if(session.recvFile(targetPath)) {
+                cout<<endl;
                 Logger::instance().info("SUCCESS: File received fully.");
             } else {
                 Logger::instance().debug("TRANSFER STOPPED: Check for .resume file to test resume.");
@@ -72,10 +73,11 @@ int main(int argc, char* argv[]) {
         if(session.performClientHandshake()){
             if(session.performKeyExchange()){
                 Logger::instance().info("Security established. Ready to send File.");
-                  string sourceFile = "D:/Projects/FileSharing/p2p/src/data/Des.png";
+                  string sourceFile = "D:/Projects/FileSharing/p2p/src/data/vid.mp4";
                   string metaFile = "D:/Projects/FileSharing/p2p/src/data/file.meta";
 
                   if(session.sendFile(sourceFile, metaFile)) {
+                    cout<<endl;
                     Logger::instance().info("SUCCESS: File sent fully.");
                 } else {
                     Logger::instance().debug("TRANSFER INTERRUPTED: Ready for resume test.");

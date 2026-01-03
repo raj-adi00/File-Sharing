@@ -188,6 +188,15 @@ build CMakeFiles/p2p.dir/src/storage/ResumeState.cpp.obj: CXX_COMPILER__p2p_unsc
   TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
   TARGET_PDB = p2p.pdb
 
+build CMakeFiles/p2p.dir/src/ui/ProgressTracker.cpp.obj: CXX_COMPILER__p2p_unscanned_ D$:/Projects/FileSharing/p2p/src/ui/ProgressTracker.cpp || cmake_object_order_depends_target_p2p
+  DEP_FILE = CMakeFiles\p2p.dir\src\ui\ProgressTracker.cpp.obj.d
+  FLAGS = -std=gnu++20
+  INCLUDES = -ID:/Projects/FileSharing/p2p/src -I"C:/Program Files/OpenSSL-Win64/include"
+  OBJECT_DIR = CMakeFiles\p2p.dir
+  OBJECT_FILE_DIR = CMakeFiles\p2p.dir\src\ui
+  TARGET_COMPILE_PDB = CMakeFiles\p2p.dir\
+  TARGET_PDB = p2p.pdb
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target p2p
@@ -196,7 +205,7 @@ build CMakeFiles/p2p.dir/src/storage/ResumeState.cpp.obj: CXX_COMPILER__p2p_unsc
 #############################################
 # Link the executable p2p.exe
 
-build p2p.exe: CXX_EXECUTABLE_LINKER__p2p_ CMakeFiles/p2p.dir/src/main.cpp.obj CMakeFiles/p2p.dir/src/core/Logger.cpp.obj CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj CMakeFiles/p2p.dir/src/crypto/CryptoEngine.cpp.obj CMakeFiles/p2p.dir/src/storage/FileManager.cpp.obj CMakeFiles/p2p.dir/src/storage/ChunkManager.cpp.obj CMakeFiles/p2p.dir/src/crypto/KeyExchange.cpp.obj CMakeFiles/p2p.dir/src/storage/ResumeState.cpp.obj | C$:/Program$ Files/OpenSSL-Win64/lib/VC/x64/MT/libcrypto.lib
+build p2p.exe: CXX_EXECUTABLE_LINKER__p2p_ CMakeFiles/p2p.dir/src/main.cpp.obj CMakeFiles/p2p.dir/src/core/Logger.cpp.obj CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj CMakeFiles/p2p.dir/src/crypto/CryptoEngine.cpp.obj CMakeFiles/p2p.dir/src/storage/FileManager.cpp.obj CMakeFiles/p2p.dir/src/storage/ChunkManager.cpp.obj CMakeFiles/p2p.dir/src/crypto/KeyExchange.cpp.obj CMakeFiles/p2p.dir/src/storage/ResumeState.cpp.obj CMakeFiles/p2p.dir/src/ui/ProgressTracker.cpp.obj | C$:/Program$ Files/OpenSSL-Win64/lib/VC/x64/MT/libcrypto.lib
   LINK_FLAGS = -static-libgcc -static-libstdc++ -static
   LINK_LIBRARIES = -lws2_32  "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MT/libcrypto.lib"  -lcrypt32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\p2p.dir
