@@ -7,11 +7,13 @@ using namespace std;
 
 class DiscoveryService{
     public:
-    DiscoveryService(const string& selfId);
+    DiscoveryService(const string& selfId,int port);
     ~DiscoveryService();
 
     void start();
     void stop();
+
+    PeerTable& getPeerTable();
 
     private:
     void run();
@@ -20,6 +22,7 @@ class DiscoveryService{
 
     string peerId;
     atomic<bool> running;
+    int myport;
     
     thread broadcaster;
     thread listener;

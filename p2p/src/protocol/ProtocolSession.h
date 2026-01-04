@@ -7,6 +7,7 @@
 #include "../crypto/CryptoEngine.h"
 #include "../crypto/KeyExchange.h"
 #include "../storage/ResumeState.h"
+#include "../ui/CLI.h"
 
 class ProtocolSession{
     public:
@@ -21,7 +22,7 @@ class ProtocolSession{
         bool performKeyExchange();
 
         bool sendFile(const std::string&filePath,const string&metaPath);
-        bool recvFile(const std::string&outputPath);
+        bool recvFile(CLI* cli);
 
         bool handleResumeAsSender(size_t totalChunks,std::vector<uint8_t>& outRemoteBitmap);
         bool handlResumeAsReceiver(ResumeState &state);

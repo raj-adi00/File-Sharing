@@ -19,3 +19,26 @@ void PeerTable::printPeers(){
         Logger::instance().info(id+" -> "+peer.ip);
     }
 }
+
+std::vector<PeerDisplay> PeerTable::getPeerList() {
+    std::lock_guard<std::mutex> lock(mtx);
+    std::vector<PeerDisplay> displayList;
+
+    // Iterate through your map of PeerInfo
+    for (auto const& [id, info] : peers) {
+        PeerDisplay pd;
+        pd.peerId = info.peerId;
+        pd.ip = info.ip;
+        // If PeerDisplay has more fields, map them here
+        
+        displayList.push_back(pd);
+    }
+
+    return displayList;
+}
+
+void PeerTable::removePeer(const string& peerId) {
+    lock_guard<mutex> lock(mtx);
+    if(!peers.count(peerId))return;
+    peers.erase(peerId);
+}

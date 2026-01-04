@@ -25,6 +25,7 @@ add_executable(p2p
     src/crypto/KeyExchange.cpp
     src/storage/ResumeState.cpp
     src/ui/ProgressTracker.cpp
+    src/ui/CLI.cpp
 )
 
 target_include_directories(p2p PRIVATE src ${OPENSSL_INC})

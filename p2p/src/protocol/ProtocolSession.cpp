@@ -11,6 +11,9 @@
 
 #include<cstring>
 #include<filesystem>
+#include<iostream>
+
+namespace fs=std::filesystem;
 
 ProtocolSession::ProtocolSession(TcpConnection &&conn, const std::string& peerId, uint32_t max_size, uint32_t chunksz) 
     : selfPeerId(peerId), 
@@ -125,9 +128,15 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
         return false;
     }
 
+    if(resp.header.type==MessageType::MSG_FILE_REJECT){
+        std::cout<<"\n[!]File rejected by peer\n";
+        Logger::instance().info("File rejected by peer");
+        return false;
+    }
+
     //Check file accept response
     if(resp.header.type!=MessageType::MSG_FILE_ACCEPT){
-        Logger::instance().error("Expected MSG_FILE_ACCEPT");
+        Logger::instance().error("Unexpected response type Received: "+std::to_string((int)resp.header.type)+" Expected: "+std::to_string((int)MessageType::MSG_FILE_ACCEPT));
         return false;
     }
 
@@ -180,7 +189,7 @@ bool ProtocolSession::sendFile(const std::string&filePath,const string&metaPath)
     return true;
 }
 
-bool ProtocolSession::recvFile(const std::string&outputPath){
+bool ProtocolSession::recvFile(CLI* cli){
     Message offer;
     if(!recvEncryptedMessage(offer)){
         Logger::instance().error("Failed to receive MSG_FILE_OFFER");
@@ -209,6 +218,25 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
     ChunkManager cmHelper("",0);
     std::vector<string> expectedHashes=cmHelper.parseManifestData(manifestData);
 
+    string fullPathFromSender(reinterpret_cast<char*>(ptr+mSize),offer.payload.size()-(ptr-offer.payload.data())-mSize);
+    fs::path p(fullPathFromSender);
+    string fileName=p.filename().string();
+
+    string downloadDir="downloads";
+    if(!fs::exists(downloadDir)){
+        fs::create_directory(downloadDir);
+    }
+    std::string finalPath=downloadDir+"/"+fileName;
+
+    if(!cli->confirmFileReceive(remotePeerId,fileName,std::to_string(fileSize/1024.0)+"KB")){
+        Message reject;
+        reject.header.type=MessageType::MSG_FILE_REJECT;
+        if(!sendEncryptedMessage(reject)){
+            Logger::instance().error("Failed to send MSG_FILE_REJECT");
+            return false;
+        }
+        return false;
+    }
     //accept
     Message accept;
     accept.header.type=MessageType::MSG_FILE_ACCEPT;
@@ -217,15 +245,15 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
         return false;
     }
     
-    std::fstream out(outputPath,std::ios::binary|std::ios::in|std::ios::out);
+    std::fstream out(finalPath,std::ios::binary|std::ios::in|std::ios::out);
     if(!out.is_open()){
-        std::ofstream create(outputPath,std::ios::binary);
+        std::ofstream create(finalPath,std::ios::binary);
         create.close();
-        out.open(outputPath,std::ios::binary|std::ios::in|std::ios::out);
+        out.open(finalPath,std::ios::binary|std::ios::in|std::ios::out);
     }
     
     ResumeState resume(totalChunks);
-    std::string resumePath=outputPath+".resume";
+    std::string resumePath=finalPath+".resume";
     resume.load(resumePath);
 
     if(!handlResumeAsReceiver(resume)){
@@ -282,7 +310,7 @@ bool ProtocolSession::recvFile(const std::string&outputPath){
          }
     }
     out.close();
-    std::filesystem::remove(outputPath+".resume");
+    std::filesystem::remove(finalPath+".resume");
     return true;
 }
 
