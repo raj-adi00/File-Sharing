@@ -1,7 +1,7 @@
 #include "PeerCore.h"
 #include "Logger.h"
 
-PeerCore::PeerCore(const string&peerId):discovery(peerId){
+PeerCore::PeerCore(const string&peerId,int tcpPort,int listenDiscPort,int sendDiscPort):discovery(peerId,tcpPort,listenDiscPort,sendDiscPort){
     Logger::instance().info("PeerCore created");
 }
 
@@ -18,4 +18,8 @@ void PeerCore::start(){
 void PeerCore::stop(){
     Logger::instance().info("PeerCore Stopping Services....");
     discovery.stop();
+}
+
+vector<PeerDisplay> PeerCore::getPeerList(){
+    return discovery.getPeerTable().getPeerList();
 }

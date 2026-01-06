@@ -7,7 +7,7 @@ using namespace std;
 
 class DiscoveryService{
     public:
-    DiscoveryService(const string& selfId,int port);
+    DiscoveryService(const string& selfId,int tcpPort,int listenDiscPort,int sendDiscPort);
     ~DiscoveryService();
 
     void start();
@@ -22,7 +22,9 @@ class DiscoveryService{
 
     string peerId;
     atomic<bool> running;
-    int myport;
+    int myTcpPort;
+    int myListenDiscPort;
+    int mySendDiscPort;
     
     thread broadcaster;
     thread listener;

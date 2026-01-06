@@ -10,6 +10,7 @@ using namespace std;
 struct PeerInfo{
     string peerId;
     string ip;
+    int port;
 };
 
 class PeerTable{

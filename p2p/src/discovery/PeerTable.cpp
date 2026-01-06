@@ -6,10 +6,8 @@ using namespace std;
 void PeerTable::addPeer(const PeerInfo& peer) {
     lock_guard<mutex> lock(mtx);
     
-    if(peers.count(peer.peerId))return;
-    
     peers[peer.peerId] = peer;
-    Logger::instance().info("Discovered Peer: "+peer.peerId +" @ "+peer.ip);
+    Logger::instance().logToFile("Discovered Peer: "+peer.peerId +" @ "+peer.ip);
 }
 
 void PeerTable::printPeers(){
@@ -29,8 +27,9 @@ std::vector<PeerDisplay> PeerTable::getPeerList() {
         PeerDisplay pd;
         pd.peerId = info.peerId;
         pd.ip = info.ip;
+        pd.port = info.port;
         // If PeerDisplay has more fields, map them here
-        
+
         displayList.push_back(pd);
     }
 

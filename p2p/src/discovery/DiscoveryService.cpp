@@ -4,14 +4,15 @@
     #include "../core/Logger.h"
     #include <chrono>
     #include <thread>
+    #include <sstream>
+    #include <iostream>
 
-    #define DISCOVERY_PORT 50000
     #define DISCOVERY_MSG_PREFIX "P2P_DISCOVERY::"
     #define DISCOVERY_LEAVE_PREFIX "P2P_LEAVE::"
 
     using namespace std;
 
-    DiscoveryService::DiscoveryService(const string&selfId,int port):peerId(selfId),running(false),myport(port){}
+    DiscoveryService::DiscoveryService(const string&selfId,int port,int listenDiscPort,int sendDiscPort):peerId(selfId),running(false),myTcpPort(port),myListenDiscPort(listenDiscPort),mySendDiscPort(sendDiscPort){}
 
     DiscoveryService::~DiscoveryService(){
         stop();
@@ -31,12 +32,22 @@
         if(!running)return;
 
         SOCKET sock=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP);
+        if(sock==INVALID_SOCKET)return;
+
+        BOOL enable=TRUE;
+        setsockopt(sock,SOL_SOCKET,SO_BROADCAST,(char*)&enable,sizeof(enable));
+
         sockaddr_in addr{};
         addr.sin_family=AF_INET;
-        addr.sin_port=htons(DISCOVERY_PORT);
-        addr.sin_addr.s_addr=INADDR_BROADCAST;
+        addr.sin_port=htons(mySendDiscPort);
 
-        string msg=DISCOVERY_LEAVE_PREFIX+peerId;
+        /*activate this setting for testing on remote machine*/
+        // addr.sin_addr.s_addr=INADDR_BROADCAST;
+
+        /* activate this setting for testing on localhost*/
+        addr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+        string msg=std::string(DISCOVERY_LEAVE_PREFIX)+peerId;
         sendto(sock,msg.c_str(),(int)msg.size(),0,(sockaddr*)&addr,sizeof(addr));
         closesocket(sock);
 
@@ -64,10 +75,15 @@
 
         sockaddr_in addr{};
         addr.sin_family=AF_INET;
-        addr.sin_port=htons(DISCOVERY_PORT);
-        addr.sin_addr.s_addr=INADDR_BROADCAST;
+        addr.sin_port=htons(mySendDiscPort);
 
-        string msg=DISCOVERY_MSG_PREFIX+peerId;
+        /*activate this setting for testing on remote machine*/
+        // addr.sin_addr.s_addr=INADDR_BROADCAST;
+
+        /* activate this setting for testing on localhost*/
+        addr.sin_addr.s_addr=inet_addr("127.0.0.1");
+
+        string msg = string(DISCOVERY_MSG_PREFIX) + "|" + peerId + "|" + to_string(myTcpPort);
 
         while(running){
             sendto(sock,msg.c_str(),(int)msg.size(),0,(sockaddr*)&addr,sizeof(addr));
@@ -85,7 +101,7 @@
         
         sockaddr_in addr{};
         addr.sin_family=AF_INET;
-        addr.sin_port=htons(DISCOVERY_PORT);
+        addr.sin_port=htons(myListenDiscPort);
         addr.sin_addr.s_addr=INADDR_ANY;
 
         bind(sock,(sockaddr*)&addr,sizeof(addr));
@@ -100,13 +116,19 @@
             buffer[bytes]='\0';
             string msg(buffer);
             if(msg.rfind(DISCOVERY_MSG_PREFIX,0)==0){
-                string remoteId=msg.substr(strlen(DISCOVERY_MSG_PREFIX));
-                if(remoteId==peerId)continue;
+                size_t firstPipe=msg.find('|');
+                if(firstPipe==string::npos)continue;
+                string content=msg.substr(firstPipe+1);
+                stringstream ss(content);
+                string remoteId,portStr;
 
-                char ipStr[INET_ADDRSTRLEN];
-                inet_ntop(AF_INET,&sender.sin_addr,ipStr,sizeof(ipStr));
-
-                peerTable.addPeer({remoteId,ipStr});
+                if(getline(ss,remoteId,'|') && getline(ss,portStr,'|')){
+                    if(remoteId==peerId)continue;
+                    int remotePort=stoi(portStr);
+                    char ipstr[INET_ADDRSTRLEN];
+                    inet_ntop(AF_INET,&sender.sin_addr,ipstr,sizeof(ipstr));
+                    peerTable.addPeer({remoteId,ipstr,remotePort});
+                }
             }else if(msg.rfind(DISCOVERY_LEAVE_PREFIX,0)==0){
                 string remoteId=msg.substr(strlen(DISCOVERY_LEAVE_PREFIX));
                 peerTable.removePeer(remoteId);
