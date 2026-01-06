@@ -187,7 +187,7 @@ ui/          → CLI interface & metrics
 
 ## 🧪 Reliability Validation
 
-* Tested with 10 MB, 500 MB, and multi-GB files
+* Tested with 10 MB and 500 MB files
 * Forced process termination mid-transfer
 * Network disconnect and reconnect
 * Resume and integrity verification
@@ -223,10 +223,4 @@ C++ | Systems Programming | Networking | Backend Engineering
 
 ⭐ If you find this project useful, consider starring the repository!
 
-```
-
-If you want next, I can:
-- Compress this into a **1-page recruiter README**
-- Write **resume bullets** directly from this
-- Add a **protocol flow diagram (ASCII)**
 ```
