@@ -1,64 +1,232 @@
-# 🚀 PeerShare (P2P-File-Transfer)
+# 🚀 PeerShare (P2P File Sharing System in C++)
 
-### A high-performance, command-line utility for secure, **peer-to-peer file sharing** powered by a custom binary protocol.
+### A high-performance, secure, peer-to-peer file sharing system built from scratch in **C++**, using a custom binary protocol, automatic LAN peer discovery, encrypted communication, and resumable file transfers.
 
-PeerShare is designed for speed and reliability. By cutting out the middleman (central servers), it allows for direct, encrypted data exchange between peers on a local network or over the internet.
-
----
-
-## ✨ Key Features (Current & Roadmap)
-
-### 🛠️ Architecture & Core Logic (Implemented)
-* **Custom Binary Protocol:** High-efficiency **Length-Prefix framing system** that ensures data integrity and prevents packet fragmentation.
-* **UDP Peer Discovery (New!):** Automatic detection of peers on the local network using UDP broadcasting. No manual IP entry required.
-* **Dynamic Peer Table:** Real-time, thread-safe registry of active neighbors discovered on the LAN.
-* **Config-Driven Design:** System behaviors (discovery ports, broadcast intervals, log paths) are managed via `config.ini`. Update settings without recompiling.
-* **Multi-Threaded Engine:** Parallel execution of Discovery (UDP), Listeners (TCP), and the Main UI/Logic thread.
-* **Robust Logging:** Multi-level (INFO, DEBUG, ERROR) thread-safe logging to both console and `p2p.log`.
-
-### 🌐 Networking & Security (In Progress - Day 5)
-* **Protocol Handshake:** Implementation of `HELLO` and `HELLO_ACK` exchange to verify peer identity and capabilities before data transfer.
-* **Session Management:** Tracking active TCP connections and protocol versions to ensure compatibility between nodes.
-* **Heartbeat & Liveness:** Integrating "Last Seen" logic to automatically prune inactive peers from the table.
-* **AES-256 Encryption:** (Future) Planned integration of secure payload encryption for private file sharing.
+PeerShare enables **direct file exchange between peers without any central server**, focusing on reliability, integrity, and real-world networking design.
 
 ---
 
-## 🏗️ The Protocol: How it works
+## 📌 Project Overview
 
-PeerShare doesn't just send raw text; it uses a structured binary format to ensure that even large files arrive without a single bit out of place.
+PeerShare is a systems-level networking project demonstrating:
+- Custom protocol design
+- Concurrent TCP/UDP networking
+- Secure and verified file transfer
+- Fault tolerance and recovery
 
+The system is fully **CLI-based** and **config-driven**.
 
+---
+
+## ✨ Key Features
+
+### 🛠️ Core Architecture
+
+- **Custom Binary Protocol**
+  - Length-prefixed framing (`type + payload_length + payload`)
+  - Safe decoding over TCP streams
+  - Designed for large file transfers
+
+- **UDP Peer Discovery (LAN)**
+  - Automatic peer discovery using UDP broadcast
+  - No manual IP or port entry required
+  - Dynamic peer table with liveness tracking
+
+- **Config-Driven System**
+  - Runtime behavior controlled via `config.ini`
+  - Ports, logging, chunk size configurable without recompiling
+
+- **Multi-Threaded Runtime**
+  - UDP discovery thread
+  - TCP listener thread
+  - Protocol handling thread
+  - File transfer execution thread
+
+- **Robust Logging**
+  - Thread-safe logger
+  - Levels: INFO, DEBUG, ERROR
+  - Console output + persistent `p2p.log`
+
+---
+
+## 🌐 Networking & Protocol Layer
+
+- **Handshake System**
+  - `HELLO` / `HELLO_ACK`
+  - Peer ID exchange
+  - Protocol version validation
+  - Capability negotiation
+
+- **Session Management**
+  - Active TCP session tracking
+  - Graceful disconnect handling
+  - Timeout and liveness detection
+
+- **Message Types**
+  - `HELLO`, `HELLO_ACK`
+  - `FILE_OFFER`, `FILE_ACCEPT`
+  - `CHUNK_DATA`, `CHUNK_ACK`
+  - `FILE_RESUME_REQUEST`
+  - `PING`, `ERROR`
+
+---
+
+## 🔐 Security & Data Integrity
+
+- **Encrypted Communication**
+  - AES-based encryption enabled after handshake
+  - Encrypted payload transmission
+
+- **Chunk-Level Integrity**
+  - Files split into fixed-size chunks (1–4 MB)
+  - SHA-256 hash per chunk
+  - Corrupt chunks are detected and retransmitted
+
+---
+
+## 📦 File Transfer System
+
+- **Chunk-Based Transfer Engine**
+  - Deterministic, reliable delivery
+  - Sequential chunk scheduling
+  - Per-chunk acknowledgment
+
+- **Resume Support**
+  - Transfer state persisted on disk
+  - Resume after crash, kill, or network loss
+  - Only missing chunks are re-requested
+
+- **Failure Recovery**
+  - Timeout-based retries
+  - Hash mismatch handling
+  - Safe cancellation and cleanup
+
+---
+
+## 🧠 Protocol Format
 
 | Field | Size | Description |
-| :--- | :--- | :--- |
-| **Type** | 2 Bytes | Identifies the message (HELLO, PING, FILE_DATA, etc.) |
-| **Length** | 4 Bytes | The size of the incoming payload (supports up to 4GB) |
-| **Payload** | Variable | The actual data (encrypted file chunks or system commands) |
+|------|------|------------|
+| Type | 2 Bytes | Message identifier |
+| Length | 4 Bytes | Payload size |
+| Payload | Variable | Encrypted data or control message |
 
 ---
 
-## ⚙️ Quick Start: Build and Run
+## ⚙️ Build & Run
 
-### Prerequisites
-* **C++17 Compiler** (MSVC, MinGW, or Clang)
-* **CMake** 3.10+
-* **Windows Socket API** (Winsock2)
+### 🔧 Prerequisites
 
-### Installation
+- C++17 compatible compiler (MSVC / MinGW / Clang)
+- CMake ≥ 3.10
+- Windows (Winsock2)
+
+---
+
+### 🛠️ Build Instructions
+
 ```bash
-# Clone the repository
-git clone '[https://github.com/raj-adi00/File-Sharing.git](https://github.com/raj-adi00/File-Sharing.git)'
+git clone https://github.com/raj-adi00/File-Sharing.git
+cd File-Sharing
 cd p2p
 
-# Clean up any existing build folder
-rm -rf build
-
-# Configure and Build
 cmake -S . -B build
 cmake --build build
+````
 
-# Start the P2P file sharing platform Server on Terminal 1
+---
+
+### ▶️ Running the Application
+
+#### Single Device (Two Terminals)
+
+Use two different config files with different TCP ports.
+
+**Terminal 1**
+
+```bash
+build/p2p.exe config.ini
+```
+
+**Terminal 2**
+
+```bash
+build/p2p.exe config1.ini
+```
+
+Peers will automatically discover each other, complete handshake, and allow file transfer.
+
+---
+
+#### Two Different Devices (LAN / Hotspot)
+
+1. Connect both devices to the same Wi-Fi or mobile hotspot
+2. Run on both devices:
+
+```bash
 build/p2p.exe
-#Start the P2P file sharing platform Client on Terminal 2
-build/p2p.exe
+```
+
+Peers are discovered automatically via UDP broadcast and can transfer files directly.
+
+---
+
+## 📁 Project Structure
+
+```
+core/        → Logger, ConfigManager
+net/         → TCP & UDP networking
+protocol/    → Message framing & handshake
+crypto/      → Encryption engine
+storage/     → File & chunk management
+transfer/    → Transfer & resume logic
+ui/          → CLI interface & metrics
+```
+
+---
+
+## 🧪 Reliability Validation
+
+* Tested with 10 MB, 500 MB, and multi-GB files
+* Forced process termination mid-transfer
+* Network disconnect and reconnect
+* Resume and integrity verification
+
+Results:
+
+* No data corruption
+* Successful resume
+* Stable execution
+
+---
+
+## 🎯 Why This Project Matters
+
+This project demonstrates:
+
+* Low-level networking (TCP + UDP)
+* Custom binary protocol design
+* Concurrent system architecture
+* Fault tolerance and recovery
+* Real-world file transfer engineering
+
+Well-suited for **C++ backend, systems, and networking interviews**.
+
+---
+
+## 👤 Author
+
+**Aditya Raj**
+C++ | Systems Programming | Networking | Backend Engineering
+
+---
+
+⭐ If you find this project useful, consider starring the repository!
+
+```
+
+If you want next, I can:
+- Compress this into a **1-page recruiter README**
+- Write **resume bullets** directly from this
+- Add a **protocol flow diagram (ASCII)**
+```
