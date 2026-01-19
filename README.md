@@ -123,6 +123,18 @@ The system is fully **CLI-based** and **config-driven**.
 
 ---
 
+## 🚀 How to Use
+
+### Option 1: Run the Portable Version (Quickest)
+1. **Download:** Get the `p2p_fileSharing_v1.0.zip`.
+2. **Extract:** Unzip the folder (e.g., to your Desktop).
+3. **Run:** Double-click `p2p.exe`. 
+   > **Note:** The `libcrypto-3-x64.dll`, `libssl-3-x64.dll`, and `config.ini` **must** stay in the same folder as the `.exe`.
+
+---
+
+### Option 2: Build from Source(For Developers)
+
 ### 🛠️ Build Instructions
 
 ```bash
