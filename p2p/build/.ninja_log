@@ -1,0 +1,20 @@
+# ninja log v7
+53	1300	7905117843558714	CMakeFiles/p2p.dir/src/protocol/Message.cpp.obj	2cd5d89c79e96bc0
+61	1870	7905117843611407	CMakeFiles/p2p.dir/src/protocol/MessageFramer.cpp.obj	619b303981e13b33
+78	2145	7905117843781719	CMakeFiles/p2p.dir/src/crypto/CryptoEngine.cpp.obj	ffbd9034f3cb2931
+114	2171	7905117844131464	CMakeFiles/p2p.dir/src/ui/CLI.cpp.obj	e7cbfe2974437131
+10	2302	7905117843101539	CMakeFiles/p2p.dir/src/core/Logger.cpp.obj	5b567254cc330770
+84	2334	7905117843834113	CMakeFiles/p2p.dir/src/storage/FileManager.cpp.obj	f72d760b9ae0384f
+21	2533	7905117843210219	CMakeFiles/p2p.dir/src/core/PeerCore.cpp.obj	f89719846d55e0fe
+90	2742	7905117843902773	CMakeFiles/p2p.dir/src/storage/ChunkManager.cpp.obj	c4c002707900c84b
+96	2744	7905117843959552	CMakeFiles/p2p.dir/src/crypto/KeyExchange.cpp.obj	7dff84473c2d20db
+16	2805	7905117843165408	CMakeFiles/p2p.dir/src/core/ConfigManager.cpp.obj	22b1460f6552bb77
+102	2979	7905117844011368	CMakeFiles/p2p.dir/src/storage/ResumeState.cpp.obj	eeb23a81a75aeda9
+67	3034	7905117843666709	CMakeFiles/p2p.dir/src/discovery/PeerTable.cpp.obj	a6ab96225ac6756
+108	3250	7905117844078041	CMakeFiles/p2p.dir/src/ui/ProgressTracker.cpp.obj	5fc1382a42a04ea0
+33	3750	7905117843404999	CMakeFiles/p2p.dir/src/net/TcpListener.cpp.obj	b9bbcc567f2ef565
+46	4079	7905117843471678	CMakeFiles/p2p.dir/src/net/TcpConnection.cpp.obj	5e0847d1198be337
+5	4673	7905117843051565	CMakeFiles/p2p.dir/src/main.cpp.obj	f8de90b6456ba25a
+26	5521	7905117843257582	CMakeFiles/p2p.dir/src/discovery/DiscoveryService.cpp.obj	fa983cb59f8acdca
+73	5990	7905117843720912	CMakeFiles/p2p.dir/src/protocol/ProtocolSession.cpp.obj	a76957ece530f8d8
+5991	6578	7905117902901736	p2p.exe	6e74ff6da2d5ec66

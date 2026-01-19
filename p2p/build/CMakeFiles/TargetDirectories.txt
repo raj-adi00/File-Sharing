@@ -1,0 +1,3 @@
+D:/Projects/FileSharing/p2p/build/CMakeFiles/p2p.dir
+D:/Projects/FileSharing/p2p/build/CMakeFiles/edit_cache.dir
+D:/Projects/FileSharing/p2p/build/CMakeFiles/rebuild_cache.dir
